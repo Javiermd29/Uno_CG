@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5acc1022a4d11ed40b5fbdb325f0e99f, type: 3}
+  m_Script: {fileID: 11500000, guid: a56c0bb05f9084decb3d94b17e195f06, type: 3}
   m_Name: Number6
   m_EditorClassIdentifier: 
   type: 0
   digit: 6
-  sprite: {fileID: 21300000, guid: e9338d2af640039408380a1f1c0eb654, type: 3}
+  sprite: {fileID: 21300000, guid: daf2e0df2306d4ac1b0712e0bad006b2, type: 3}
