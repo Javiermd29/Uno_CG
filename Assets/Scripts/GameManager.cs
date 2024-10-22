@@ -4,12 +4,39 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
 
     [SerializeField] private Player[] players;
 
-    private void Start()
+    private CardsManager cardsManager;
+
+    private void Awake()
     {
-        //players[0].InitializePlayerHand();
+        if (Instance != null)
+        {
+            Debug.LogError("There's more than one instance");
+        }
+
+        Instance = this;
     }
 
+    private void Start()
+    {
+        cardsManager = FindObjectOfType<CardsManager>();
+        
+        // Inicializar partida
+        cardsManager.CreateDrawDeck();
+        cardsManager.ShuffleDeck();
+
+        players[0].InitializePlayerHand();
+        cardsManager.AddCardToDiscardDeck(cardsManager.DrawCardFromDrawDeck());
+
+
+        Debug.Log(players[0].CanPlayCard(players[0].GetPlayerHandCards()[0]));
+    }
+
+    public CardsManager GetCardsManager()
+    {
+        return cardsManager;
+    }
 }
