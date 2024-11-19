@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class Card : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class Card : MonoBehaviour
    [SerializeField] private SpriteRenderer backSpriteRenderer;
 
    private bool _isFaceDown;
+
+
+   public Action PlayCardEffect;
 
    public void SetupOrderInLayer(int idx)
    {
@@ -27,6 +31,16 @@ public class Card : MonoBehaviour
 
         symbolSpriteRenderer.sprite = soCard.sprite;
         cardSpriteRenderer.color = color;
+   }
+
+   public void ShowCard()
+   {
+        gameObject.SetActive(true);
+   }
+
+   public void HideCard()
+   {
+        gameObject.SetActive(false);
    }
 
    public void IsFaceDown(bool isFaceDown)
@@ -48,5 +62,58 @@ public class Card : MonoBehaviour
    public Color GetColor()
    {
         return _color;
+   }
+
+   public void ChangeParent(Transform newParent)
+   {
+        transform.SetParent(newParent);
+        transform.localPosition = Vector3.zero;
+   }
+
+   public void SetCardEffect()
+   {
+        PlayCardEffect = _soCard.type switch
+        {
+             CardType.Number => PlayNumberEffect,
+             CardType.Skip => PlaySkipEffect,
+             CardType.Invert => PlayInvertEffect,
+             CardType.Plus2 => PlayPlus2Effect,
+             CardType.Plus4 => PlayPlus4Effect,
+             CardType.ChangeColor => PlayChageColorEffect,
+             _ => throw new Exception($"Unknown card type {_soCard.type}")
+        };
+   }
+   
+   private void PlayNumberEffect() 
+   {
+        Debug.Log("Juego la carta Número");
+   }
+
+   private void PlaySkipEffect() 
+   {
+        Debug.Log("Juego la carta Skip");
+        GameManager.Instance.ChangeTurn();
+   }
+
+   private void PlayInvertEffect() 
+   {
+        Debug.Log("Juego la carta Invert");
+        GameManager.Instance.ChangeTurnOrder();
+   }
+
+   private void PlayPlus2Effect() 
+   {
+        Debug.Log("Juego la carta Plus2");
+        GameManager.Instance.UpdateTotalCardsToDraw(2);
+   }
+
+   private void PlayPlus4Effect() 
+   {
+        Debug.Log("Juego la carta Plus4");
+   }
+
+   private void PlayChageColorEffect() 
+   {
+        Debug.Log("Juego la carta ChangeColor");
    }
 }

@@ -23,11 +23,11 @@ public class CardsManager : MonoBehaviour
 
     private Dictionary<string, Color> cardColors = new Dictionary<string, Color>() 
     {
-        {"Red", Color.red},
-        {"Green", Color.green},
-        {"Blue", Color.blue},
-        {"Yellow", Color.yellow},
-        {"Black", Color.black}
+        {"Red", Constants.RED_COLOR},
+        {"Green", Constants.GREEN_COLOR},
+        {"Blue", Constants.BLUE_COLOR},
+        {"Yellow", Constants.YELLOW_COLOR},
+        {"Black", Constants.BLACK_COLOR}
     };
 
     [SerializeField] private List<Card> drawDeck;
@@ -37,20 +37,21 @@ public class CardsManager : MonoBehaviour
     {
         if (Instance != null)
         {
-            Debug.LogError("There's more than one instance");
+            Debug.LogError("There's more than one instance of CardsManager");
         }
 
         Instance = this;
     }
 
-    private Card CreateCard(SOCard soCard, Color color, int idx)
+    // TODO: When finished with testing, turn this function back to private
+    public Card CreateCard(SOCard soCard, Color color, int idx)
     {
         GameObject newCard = Instantiate(cardPrefab);
-        newCard.transform.SetParent(drawDeckTransform);
-        newCard.transform.localPosition = Vector3.zero;
 
         Card card = newCard.GetComponent<Card>();
+        card.ChangeParent(drawDeckTransform);
         card.SetupCardVisuals(soCard, color);
+        card.SetCardEffect();
         card.SetupOrderInLayer(idx);
         
         drawDeck.Add(card);
@@ -69,7 +70,7 @@ public class CardsManager : MonoBehaviour
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    newCard = CreateCard(soCard, cardColors[CardColor.Black.ToString()], layer);
+                    newCard = CreateCard(soCard, GetColorFromCardColor(CardColor.Black), layer);
                     newCard.IsFaceDown(true);   
                     layer++;
                 }
@@ -79,7 +80,7 @@ public class CardsManager : MonoBehaviour
                 for (int i = 0; i < 8; i++)
                 {
                     CardColor color = (CardColor)(i % 4);
-                    newCard = CreateCard(soCard, cardColors[color.ToString()], layer);
+                    newCard = CreateCard(soCard, GetColorFromCardColor(color), layer);
                     newCard.IsFaceDown(true);   
                     layer++;
                 }
@@ -113,14 +114,16 @@ public class CardsManager : MonoBehaviour
     public void AddCardToDiscardDeck(Card card)
     {
         discardDeck.Add(card);
-
-        card.gameObject.transform.SetParent(discardDeckTransform);
-        card.gameObject.transform.localPosition = Vector3.zero;
+        
+        card.ChangeParent(discardDeckTransform);
+        
+        // TODO: Hacer función cambiar escala de la carta
         card.gameObject.transform.localScale = new Vector3(Constants.CARD_WIDTH, Constants.CARD_HEIGHT, 1);
 
         card.SetupOrderInLayer(discardDeck.Count - 1);
 
         card.IsFaceDown(false);
+        card.ShowCard();
     }
 
     public Card GetLastPlayedCard()
@@ -139,5 +142,10 @@ public class CardsManager : MonoBehaviour
         if (card1.GetCardDigit() != card2.GetCardDigit()) return false;
 
         return true;
-    }    
+    }
+
+    public Color GetColorFromCardColor(CardColor cardColor)
+    {
+        return cardColors[cardColor.ToString()];
+    }
 }
